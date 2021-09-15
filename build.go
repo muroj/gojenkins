@@ -69,6 +69,16 @@ type generalObj struct {
 	MercurialNodeName       string                   `json:"mercurialNodeName"`
 	MercurialRevisionNumber string                   `json:"mercurialRevisionNumber"`
 	Subdir                  interface{}              `json:"subdir"`
+	Class                   string                   `json:"_class"`
+	BlockedDurationMillis   int64                    `json:"blockedDurationMillis"`
+	BlockedTimeMillis       int64                    `json:"blockedTimeMillis"`
+	BuildableTimeMillis     int64                    `json:"buildableTimeMillis"`
+	BuildingDurationMillis  int64                    `json:"buildingDurationMillis"`
+	ExecutingTimeMillis     int64                    `json:"executingTimeMillis"`
+	ExecutorUtilization     int64                    `json:"executorUtilization"`
+	SubTaskCount            int64                    `json:"subTaskCount"`
+	WaitingDurationMillis   int64                    `json:"waitingDurationMillis"`
+	WaitingTimeMillis       int64                    `json:"waitingTimeMillis"`
 	TotalCount              int64
 	UrlName                 string
 }
@@ -437,6 +447,15 @@ func (b *Build) GetTimestamp() time.Time {
 
 func (b *Build) GetDuration() float64 {
 	return b.Raw.Duration
+}
+
+func (b *Build) GetExecutionTimeMs() int64 {
+	for _, a := range b.Raw.Actions {
+		if a.Class == "jenkins.metrics.impl.TimeInQueueAction" {
+			return a.ExecutingTimeMillis
+		}
+	}
+	return -1
 }
 
 func (b *Build) GetRevision() string {
