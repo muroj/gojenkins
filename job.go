@@ -415,6 +415,36 @@ func (j *Job) IsEnabled(ctx context.Context) (bool, error) {
 	return j.Raw.Color != "disabled", nil
 }
 
+func (j *Job) IsOrganizationFolder() bool {
+	return j.Raw.Class == "jenkins.branch.OrganizationFolder"
+}
+
+func (j *Job) IsMultibranchProject() bool {
+	return j.Raw.Class == "org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject"
+}
+
+func (j *Job) IsPipelineJob() bool {
+	return j.Raw.Class == "org.jenkinsci.plugins.workflow.job.WorkflowJob"
+}
+
+func (j *Job) IsGheOrgizationFolder() bool {
+	for _, a := range j.Raw.Actions {
+		if a.Class == "org.jenkinsci.plugins.github_branch_source.GitHubOrgMetadataAction" {
+			return true
+		}
+	}
+	return false
+}
+
+func (j *Job) IsGithubMultibranchProject() bool {
+	for _, a := range j.Raw.Actions {
+		if a.Class == "org.jenkinsci.plugins.github_branch_source.GitHubRepoMetadataAction" {
+			return true
+		}
+	}
+	return false
+}
+
 func (j *Job) HasQueuedBuild() {
 	panic("Not Implemented yet")
 }
