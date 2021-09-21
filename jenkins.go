@@ -484,6 +484,18 @@ func (j *Jenkins) GetPlugins(ctx context.Context, depth int) (*Plugins, error) {
 	return &p, nil
 }
 
+// Returns the Update Center information
+// You can supply depth parameter, to limit how much data is returned.
+func (j *Jenkins) GetUpdateCenter(ctx context.Context) (*UpdateCenter, error) {
+	parms := "_class,jobs[_class,errorMessage,name,type,status[success,type,_class]],restartRequiredForCompletion,sites[id,url]"
+	uc := UpdateCenter{Jenkins: j, Raw: new(UpdateCenterResponse), Base: "/updateCenter", Tree: parms}
+	_, err := uc.Poll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &uc, nil
+}
+
 // UninstallPlugin plugin otherwise returns error
 func (j *Jenkins) UninstallPlugin(ctx context.Context, name string) error {
 	url := fmt.Sprintf("/pluginManager/plugin/%s/doUninstall", name)
@@ -509,6 +521,17 @@ func (j *Jenkins) HasPlugin(ctx context.Context, name string) (*Plugin, error) {
 func (j *Jenkins) InstallPlugin(ctx context.Context, name string, version string) error {
 	xml := fmt.Sprintf(`<jenkins><install plugin="%s@%s" /></jenkins>`, name, version)
 	resp, err := j.Requester.PostXML(ctx, "/pluginManager/installNecessaryPlugins", xml, j.Raw, map[string]string{})
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Invalid status code returned: %d", resp.StatusCode)
+	}
+	return err
+}
+
+//InstallPlugin with given version and name
+func (j *Jenkins) PrevalidateConfig(ctx context.Context, name string, version string) error {
+	xml := fmt.Sprintf(`<jenkins><install plugin="%s@%s" /></jenkins>`, name, version)
+	resp, err := j.Requester.PostXML(ctx, "/pluginManager/prevalidateConfig", xml, j.Raw, map[string]string{})
 
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("Invalid status code returned: %d", resp.StatusCode)
