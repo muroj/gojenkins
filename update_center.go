@@ -61,6 +61,12 @@ func (p *UpdateCenter) PrintFailedPlugins() bool {
 	return failed
 }
 
+func (p *UpdateCenter) PrintJobStatus() {
+	for _, j := range p.Raw.Jobs {
+		log.Printf("plugin: %s, %s:%s", j.Name, j.Type, j.Status.Type)
+	}
+}
+
 func (p *UpdateCenter) RestartRequired() bool {
 	return p.Raw.RestartRequired
 }
