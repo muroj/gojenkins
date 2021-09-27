@@ -487,7 +487,7 @@ func (j *Jenkins) GetPlugins(ctx context.Context, depth int) (*Plugins, error) {
 // Returns the Update Center information
 // You can supply depth parameter, to limit how much data is returned.
 func (j *Jenkins) GetUpdateCenter(ctx context.Context) (*UpdateCenter, error) {
-	parms := "_class,jobs[_class,errorMessage,name,type,status[success,type,_class]],restartRequiredForCompletion,sites[id,url]"
+	parms := "_class,jobs[_class,id,errorMessage,name,type,status[success,type,_class]],restartRequiredForCompletion,sites[id,url]"
 	uc := UpdateCenter{Jenkins: j, Raw: new(UpdateCenterResponse), Base: "/updateCenter", Tree: parms}
 	_, err := uc.Poll(ctx)
 	if err != nil {
