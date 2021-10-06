@@ -300,9 +300,19 @@ func TestConcurrentRequests(t *testing.T) {
 }
 
 func TestExecuteScript(t *testing.T) {
+	TestInit(t)
 	ctx := context.Background()
 	response, _ := jenkins.ExecuteScript(ctx, "println(\"Hello World!\")")
-	assert.Equal(t, "Hello World!", response)
+	assert.Equal(t, "Hello World!\n", response)
+}
+
+func TestExecuteScriptFromFile(t *testing.T) {
+	TestInit(t)
+	ctx := context.Background()
+
+	gs := getFileAsString("getJenkinsVersion.groovy")
+	response, _ := jenkins.ExecuteScript(ctx, gs)
+	assert.Equal(t, jenkins.Version, response)
 }
 
 func getFileAsString(path string) string {

@@ -2,7 +2,6 @@ package gojenkins
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -122,14 +121,14 @@ func TestCreateSSHCredentialsFullFlow(t *testing.T) {
 
 }
 
-func TestMain(m *testing.M) {
-	//setup
-	ctx := context.Background()
-	jenkins := CreateJenkins(nil, "http://localhost:8080", "admin", "admin")
-	jenkins.Init(ctx)
+// func TestMain(m *testing.M) {
+// 	//setup
+// 	ctx := context.Background()
+// 	jenkins := CreateJenkins(nil, "http://localhost:8080", "admin", "admin")
+// 	jenkins.Init(ctx)
 
-	cm = CredentialsManager{J: jenkins}
+// 	cm = CredentialsManager{J: jenkins}
 
-	//execute tests
-	os.Exit(m.Run())
-}
+// 	//execute tests
+// 	os.Exit(m.Run())
+// }
